@@ -1,5 +1,4 @@
 
-
 # 📚 Book Recommendation Engine
 
 A full-stack **Book Recommendation System** built from scratch with Python.  
@@ -16,6 +15,7 @@ Later, i'll expose it through an API, build a frontend, and deploy it with CI/CD
 ---
 
 ## ✨ Features (So Far)
+
 - ✅ Web scraping from [Books to Scrape](https://books.toscrape.com) (1000 books).  
 - ✅ Cleaned & preprocessed dataset (`books_clean.csv`).  
 - ✅ Exploratory Data Analysis (EDA): categories, price distribution, ratings, word clouds.  
@@ -56,18 +56,20 @@ book-recommender/
 └── README.mdx
 
 ```
+
 ---
 
 ### ⚡ Quick Start
 
 1. Clone the repo
-```bash 
+
+```bash
 git clone https://github.com/kamatealif/shelf-sage.git
 cd shelf-sage
 ```
 
-
 2. Create & activate a virtual environment(i am using uv)
+
 ```bash
 # to install the uv if not installed
 pip install uv
@@ -81,7 +83,7 @@ uv sync
 
 3. Scrape the dataset
 
-```bash 
+```bash
 python src/scraping/scrape_books.py
 ```
 
@@ -92,7 +94,7 @@ python src/preprocessing/clean_data.py
 ```
 
 5. Run the recommender
-   
+
 ```bash
 python src/models/recommender.py
 ```
