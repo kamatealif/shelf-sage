@@ -4,38 +4,24 @@ import os
 import sys
 import pandas as pd
 
-# 🔹 Handle imports (works as script & module)
 try:
-    # If running as part of package
-    from src.models.content_based import ContentBasedRecommender
+    from src.models.category_based import CategoryBasedRecommender
 except ModuleNotFoundError:
-    # If running directly (fallback: add project root to sys.path)
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-    from src.models.content_based import ContentBasedRecommender
+    from src.models.category_based import CategoryBasedRecommender
 
 
 class BookRecommender:
     def __init__(self, books_path: str):
-        """
-        Wrapper class for book recommendation.
-        Args:
-            books_path (str): Path to processed books CSV.
-        """
         self.books = pd.read_csv(books_path)
         print(f"✅ Loaded {len(self.books)} books.")
-
-        # Initialize content-based recommender
-        self.model = ContentBasedRecommender(self.books)
+        self.model = CategoryBasedRecommender(self.books)
 
     def recommend(self, title: str, top_n: int = 5):
-        """
-        Get recommendations for a given book title.
-        """
-        return self.model.get_similar_books(title, top_n)
+        return self.model.get_recommendations(title, top_n)
 
 
 if __name__ == "__main__":
-    # Example usage when run directly
     books_path = "data/processed/books_clean.csv"
 
     if not os.path.exists(books_path):
@@ -43,7 +29,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     recommender = BookRecommender(books_path)
-
-    query ="tipping the velvet"  # change this to test with other books
+    print("\n📚 Welcome to the Book Recommender!")
+    print("🔍 search only for book that we have available in our books.csv")
+    query = input("\n📖 Enter a book title: ").strip().lower()
     print(f"\n🔍 Recommendations for '{query}':")
     print(recommender.recommend(query, top_n=5))
+
+    print("\n👋 Goodbye!")
