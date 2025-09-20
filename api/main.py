@@ -21,7 +21,7 @@ except Exception:
         from src.models.category_based import CategoryBasedRecommender
 
 # ---- Config ----
-BOOKS_CSV = "../data/processed/books_clean.csv"
+BOOKS_CSV = "data/processed/books_clean.csv"
 MODEL_PKL = "models/category_based.pkl"
 DEFAULT_PAGE_SIZE = 20
 
@@ -53,14 +53,7 @@ app.add_middleware(
 )
 
 # ---- Helpers ----
-def slugify_title(title: str) -> str:
-    # simple slugify (keeps ASCII and hyphens)
-    import re
-    s = title.lower().strip()
-    s = re.sub(r"[^\w\s-]", "", s)     # remove punctuation
-    s = re.sub(r"\s+", "-", s)         # spaces -> hyphens
-    s = re.sub(r"-+", "-", s)          # collapse multiple hyphens
-    return s
+
 
 def load_books(csv_path: str) -> pd.DataFrame:
     if not os.path.exists(csv_path):
@@ -130,24 +123,60 @@ def list_books(page: int = Query(1, ge=1), page_size: int = Query(DEFAULT_PAGE_S
         )
     return results
 
+#  helper reused
+def slugify_title(title: str) -> str:
+    import re
+    s = str(title).lower().strip()
+    s = re.sub(r"[^\w\s-]", "", s)     # remove punctuation
+    s = re.sub(r"\s+", "-", s)         # spaces -> hyphens
+    s = re.sub(r"-+", "-", s)          # collapse multiple hyphens
+    return s
 
 @app.get("/books/{slug}", response_model=RecommendationOut)
 def get_book_and_recommendations(slug: str, top_n: int = Query(10, ge=1, le=50)):
     """
-    Return book details for the slug and recommended books (from same category).
+    Robust lookup:
+      1) exact slug match
+      2) slugify(input_slug) match
+      3) title contains (case-insensitive) match -> take first result
     """
-    row = BOOKS_DF[BOOKS_DF["slug"] == slug]
+    # normalize input
+    slug_in = str(slug).lower().strip()
+
+    # 1) exact slug match
+    row = BOOKS_DF[BOOKS_DF["slug"] == slug_in]
     if row.empty:
-        raise HTTPException(status_code=404, detail=f"No book found for slug '{slug}'")
+        # 2) try slugify the input (in case frontend slug differs)
+        alt = slugify_title(slug_in)
+        if alt != slug_in:
+            row = BOOKS_DF[BOOKS_DF["slug"] == alt]
+
+    if row.empty:
+        # 3) try title contains fallback (replace hyphens with spaces)
+        guess = slug_in.replace("-", " ").strip()
+        if guess:
+            matched = BOOKS_DF[BOOKS_DF["title"].str.contains(guess, na=False)]
+            if not matched.empty:
+                row = matched.head(1)  # pick first close match
+
+    if row.empty:
+        # helpful response: show top 5 similar slugs to help debugging
+        sample = BOOKS_DF["slug"].head(10).tolist()
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": f"No book found for slug '{slug}'.",
+                "hint": "Try one of these sample slugs or check slug generation.",
+                "samples": sample
+            }
+        )
 
     book = row.iloc[0]
     title = book["title"]
 
     # get recommendations from the recommender (it expects title in lowercase)
     rec = RECOMMENDER.get_recommendations(title, top_n=top_n)
-    # rec may be a dataframe or an error string
     if isinstance(rec, str):
-        # error message
         raise HTTPException(status_code=404, detail=rec)
 
     rec_list = []
@@ -164,7 +193,6 @@ def get_book_and_recommendations(slug: str, top_n: int = Query(10, ge=1, le=50))
             }
         )
 
-    # Prepare detail + recommendations; detail is the first element or separate if you need
     detail = {
         "title": book["title"],
         "slug": book["slug"],
@@ -176,9 +204,7 @@ def get_book_and_recommendations(slug: str, top_n: int = Query(10, ge=1, le=50))
         "url": None,
     }
 
-    # Return detail inside 'recommendations' output (frontend can merge as desired)
     return {"recommendations": [detail] + rec_list}
-
 
 @app.get("/categories", response_model=List[str])
 def list_categories():
