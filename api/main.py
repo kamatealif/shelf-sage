@@ -21,7 +21,7 @@ except Exception:
         from src.models.category_based import CategoryBasedRecommender
 
 # ---- Config ----
-BOOKS_CSV = "data/processed/books_clean.csv"
+BOOKS_CSV = "../data/processed/books_clean.csv"
 MODEL_PKL = "models/category_based.pkl"
 DEFAULT_PAGE_SIZE = 20
 
