@@ -38,6 +38,13 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
+  .desc-clamp {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
 </style>
 
 {#if !detail}
@@ -109,6 +116,9 @@
             <div class="min-w-0">
               <h3 class="title-clamp text-sm font-bold text-slate-900">{rec.title}</h3>
               <p class="mt-1 text-xs capitalize text-slate-500">{rec.category}</p>
+              {#if rec.description}
+                <p class="desc-clamp mt-2 text-xs leading-relaxed text-slate-600">{rec.description}</p>
+              {/if}
               <p class="mt-2 text-xs text-slate-600">Rating {rec.rating ?? '-'}/5</p>
               <p class="mt-1 text-sm font-semibold text-slate-900">{formatPrice(rec.price_clean)}</p>
             </div>

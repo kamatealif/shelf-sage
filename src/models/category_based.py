@@ -41,7 +41,18 @@ class CategoryBasedRecommender:
             by=["rating", "price_clean"], ascending=[False, True]
         )
 
-        return similar_books.head(top_n)[["title", "category", "rating", "price_clean"]]
+        # Keep rich fields so API consumers can render covers and descriptions.
+        preferred_columns = [
+            "title",
+            "slug",
+            "category",
+            "rating",
+            "price_clean",
+            "img",
+            "description",
+        ]
+        columns = [c for c in preferred_columns if c in similar_books.columns]
+        return similar_books.head(top_n)[columns]
 
     def save(self, filepath: str):
         """

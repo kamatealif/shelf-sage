@@ -38,10 +38,10 @@ class BookSummary(BaseModel):
     url: Optional[str]  # optional frontend url (constructed by frontend if needed)
 
 class BookDetail(BookSummary):
-    description: Optional[str]
+    description: Optional[str] = None
 
 class RecommendationOut(BaseModel):
-    recommendations: List[BookSummary]
+    recommendations: List[BookDetail]
 
 # ---- Helpers ----
 
@@ -184,14 +184,31 @@ def get_book_and_recommendations(slug: str, top_n: int = Query(10, ge=1, le=50))
 
     rec_list = []
     for _, r in rec.iterrows():
+        rec_title = str(r["title"]).lower().strip()
+        source = BOOKS_DF[BOOKS_DF["title"] == rec_title].head(1)
+        src = source.iloc[0] if not source.empty else r
+
+        rec_slug = r.get("slug")
+        if pd.isna(rec_slug) or not rec_slug:
+            rec_slug = src.get("slug") if "slug" in src else slugify_title(rec_title)
+
+        rec_img = r.get("img")
+        if pd.isna(rec_img) or not rec_img:
+            rec_img = src.get("img") if "img" in src else None
+
+        rec_desc = r.get("description")
+        if pd.isna(rec_desc) or not rec_desc:
+            rec_desc = src.get("description") if "description" in src else None
+
         rec_list.append(
             {
-                "title": r["title"],
-                "slug": slugify_title(r["title"]),
+                "title": rec_title,
+                "slug": rec_slug,
                 "category": r["category"],
                 "rating": int(r["rating"]) if pd.notna(r.get("rating")) else None,
                 "price_clean": float(r["price_clean"]) if pd.notna(r.get("price_clean")) else None,
-                "img": r.get("img"),
+                "img": rec_img,
+                "description": rec_desc,
                 "url": None,
             }
         )
