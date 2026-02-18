@@ -1,4 +1,3 @@
-
 # 📚 Book Recommendation Engine
 
 A full-stack **Book Recommendation System** built from scratch with Python.  
@@ -16,11 +15,11 @@ Later, i'll expose it through an API, build a frontend, and deploy it with CI/CD
 
 ## ✨ Features (So Far)
 
-- ✅ Web scraping from [Books to Scrape](https://books.toscrape.com) (1000 books).  
-- ✅ Cleaned & preprocessed dataset (`books_clean.csv`).  
-- ✅ Exploratory Data Analysis (EDA): categories, price distribution, ratings, word clouds.  
-- ✅ Content-Based Recommendation Model (TF-IDF + Cosine Similarity).  
-- ✅ Robust `BookRecommender` class for reuse in scripts and notebooks.  
+- ✅ Web scraping from [Books to Scrape](https://books.toscrape.com) (1000 books).
+- ✅ Cleaned & preprocessed dataset (`books_clean.csv`).
+- ✅ Exploratory Data Analysis (EDA): categories, price distribution, ratings, word clouds.
+- ✅ Content-Based Recommendation Model (TF-IDF + Cosine Similarity).
+- ✅ Robust `BookRecommender` class for reuse in scripts and notebooks.
 
 ---
 
@@ -77,7 +76,7 @@ pip install uv
 # to create the .venv with dependecines installed in it
 uv sync
 
-# activate it 
+# activate it
 .\.venv\Scripts\activate
 ```
 
@@ -99,6 +98,13 @@ python src/preprocessing/clean_data.py
 python src/models/recommender.py
 ```
 
+6. Run the Fastapi server
+
+```bash
+uvicorn main:app --reload
+
+```
+
 ---
 
 🧠 How It Works
@@ -110,6 +116,7 @@ python src/models/recommender.py
 - The recommender returns the most similar books for a given title.
 
 ---
+
 🛠️ Tech Stack
 
 - Python (data scraping, processing, ML)
@@ -129,6 +136,7 @@ python src/models/recommender.py
 - Docker + GitHub Actions (planned, deployment & CI/CD)
 
 ---
+
 👨‍💻 Author
 
-Your Name (@[kamatealif](kamatealif.github.io))
+kamatealif (@[kamatealif](kamatealif.github.io))

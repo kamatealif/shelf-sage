@@ -1,8 +1,8 @@
-<script context="module">
+<script module>
   import { redirect } from '@sveltejs/kit';
-  import { PUBLIC_API_BASE } from '$env/static/public';
+  import { env } from '$env/dynamic/public';
 
-  const API_BASE = PUBLIC_API_BASE || 'http://localhost:8000';
+  const API_BASE = env.PUBLIC_API_BASE || 'http://localhost:8000';
 
   // helper to fetch and parse JSON with details
   async function fetchJson(url, fetcher) {
@@ -82,10 +82,6 @@
   function formatPrice(p) { return p == null ? '-' : `£${p}`; }
 </script>
 
-<style>
-  .card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-</style>
-
 <!-- Debug banner -->
 <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 mb-4">
   <strong>Debug:</strong> This page shows raw `data` for debugging. Remove debug UI after fix.
@@ -118,7 +114,7 @@
       <h3 class="text-lg font-semibold mb-4">Recommended from the same category</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {#each recs.slice(1) as r}
-          <a href={`/books/${r.slug}`} sveltekit:prefetch class="bg-white p-3 rounded shadow hover:shadow-md flex">
+          <a href={`/books/${r.slug}`} data-sveltekit-preload-data="hover" class="bg-white p-3 rounded shadow hover:shadow-md flex">
             <div class="w-20 h-28 bg-gray-100 mr-3 flex items-center justify-center overflow-hidden">
               {#if r.img}
                 <img src={r.img} alt={r.title} class="max-h-full" loading="lazy" decoding="async" />

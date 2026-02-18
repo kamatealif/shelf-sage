@@ -1,3 +1,43 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+:root {
+  --bg-soft: #f1fbf8;
+  --bg-mist: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.94);
+  --stroke: rgba(15, 23, 42, 0.12);
+  --text-strong: #0f172a;
+  --text-muted: #475569;
+  --brand: #0f766e;
+  --brand-strong: #115e59;
+  --accent: #ea580c;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(1000px 620px at -10% -20%, rgba(45, 212, 191, 0.26), transparent 60%),
+    radial-gradient(880px 560px at 110% -15%, rgba(251, 146, 60, 0.2), transparent 60%),
+    linear-gradient(180deg, var(--bg-soft), var(--bg-mist));
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Outfit', 'Manrope', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+}

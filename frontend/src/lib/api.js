@@ -1,7 +1,7 @@
 // src/lib/api.js
-import { PUBLIC_API_BASE } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
-const API_BASE = PUBLIC_API_BASE || 'http://localhost:8000';
+const API_BASE = env.PUBLIC_API_BASE || 'http://localhost:8000';
 
 async function parseJsonSafe(res) {
 	try {

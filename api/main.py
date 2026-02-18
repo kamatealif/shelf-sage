@@ -1,6 +1,7 @@
 # api/main.py
 import os
 import sys
+from contextlib import asynccontextmanager
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, Query
@@ -24,6 +25,7 @@ except Exception:
 BOOKS_CSV = "../data/processed/books_clean.csv"
 MODEL_PKL = "models/category_based.pkl"
 DEFAULT_PAGE_SIZE = 20
+RECOMMENDER = None
 
 # ---- Pydantic schemas ----
 class BookSummary(BaseModel):
@@ -40,17 +42,6 @@ class BookDetail(BookSummary):
 
 class RecommendationOut(BaseModel):
     recommendations: List[BookSummary]
-
-# ---- App setup ----
-app = FastAPI(title="Book Recommender API")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # change in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ---- Helpers ----
 
@@ -74,8 +65,8 @@ def load_books(csv_path: str) -> pd.DataFrame:
     return df
 
 # ---- Startup: load model & data ----
-@app.on_event("startup")
-def startup_event():
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     global BOOKS_DF, RECOMMENDER
     # Load books
     try:
@@ -96,6 +87,18 @@ def startup_event():
         RECOMMENDER = CategoryBasedRecommender(BOOKS_DF)
         RECOMMENDER.save(MODEL_PKL)
         print("Trained and saved new recommender model.")
+    yield
+
+# ---- App setup ----
+app = FastAPI(title="Book Recommender API", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # change in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ---- Endpoints ----
