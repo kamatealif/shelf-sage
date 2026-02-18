@@ -218,9 +218,12 @@ def list_categories():
 
 @app.get("/search", response_model=List[BookSummary])
 def search_books(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1, le=200)):
-    """Simple case-insensitive title search."""
+    """Case-insensitive search across title and category."""
     q_lower = q.lower().strip()
-    matched = BOOKS_DF[BOOKS_DF["title"].str.contains(q_lower, na=False)]
+    matched = BOOKS_DF[
+        BOOKS_DF["title"].str.contains(q_lower, na=False, regex=False)
+        | BOOKS_DF["category"].str.contains(q_lower, na=False, regex=False)
+    ]
     matched = matched.head(limit)
     results = []
     for _, r in matched.iterrows():

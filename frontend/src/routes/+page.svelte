@@ -224,9 +224,9 @@
       <button
         type="button"
         onclick={() => loadPage(Math.max(1, page - 1))}
-        disabled={page <= 1 || searching}
+        disabled={page <= 1 || searching || q.trim().length > 0}
         class={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition sm:flex-none ${
-          page <= 1 || searching
+          page <= 1 || searching || q.trim().length > 0
             ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
             : 'border-slate-200 bg-white text-slate-700 hover:-translate-y-0.5 hover:border-teal-300 hover:text-teal-800'
         }`}
@@ -236,9 +236,9 @@
       <button
         type="button"
         onclick={() => loadPage(page + 1)}
-        disabled={searching}
+        disabled={searching || q.trim().length > 0}
         class={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition sm:flex-none ${
-          searching
+          searching || q.trim().length > 0
             ? 'cursor-not-allowed border-teal-300 bg-teal-200/70 text-teal-700'
             : 'border-teal-700 bg-teal-700 text-white hover:-translate-y-0.5 hover:bg-teal-800'
         }`}
@@ -356,9 +356,9 @@
       <button
         type="button"
         onclick={() => loadPage(Math.max(1, page - 1))}
-        disabled={page <= 1 || searching}
+        disabled={page <= 1 || searching || q.trim().length > 0}
         class={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${
-          page <= 1 || searching
+          page <= 1 || searching || q.trim().length > 0
             ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
             : 'border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:text-teal-800'
         }`}
@@ -368,9 +368,9 @@
       <button
         type="button"
         onclick={() => loadPage(page + 1)}
-        disabled={searching}
+        disabled={searching || q.trim().length > 0}
         class={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${
-          searching
+          searching || q.trim().length > 0
             ? 'cursor-not-allowed border-teal-300 bg-teal-200/70 text-teal-700'
             : 'border-teal-700 bg-teal-700 text-white hover:bg-teal-800'
         }`}
